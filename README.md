@@ -1,4 +1,4 @@
-# lukakovacevic
+# Luka Kovacevic
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
