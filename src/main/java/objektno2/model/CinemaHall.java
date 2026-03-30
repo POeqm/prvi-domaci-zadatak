@@ -20,7 +20,10 @@ public class CinemaHall {
     private Long id;
     private String name;
     private int noOfSeats;
-    @OneToMany(mappedBy = "cinemaHall")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "cinema_hall_info_id")
+    private CinemaHallInfo cinemaHallInfo;
+    @OneToMany(mappedBy = "cinemaHall", fetch = FetchType.LAZY)
     private Set<Projection>projections;
 
     public CinemaHall(Long id, String name, int noOfSeats) {
@@ -32,6 +35,8 @@ public class CinemaHall {
     public CinemaHall() {
 
     }
+    public CinemaHallInfo getCinemaHallInfo() { return cinemaHallInfo; }
+    public void setCinemaHallInfo(CinemaHallInfo cinemaHallInfo) { this.cinemaHallInfo = cinemaHallInfo; }
 
     public void setName(String name) {
         this.name = name;

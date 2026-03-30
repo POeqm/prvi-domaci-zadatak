@@ -6,11 +6,13 @@ import java.util.List;
 
 @Entity
 @NamedQuery(name = Movie.GET_ALL_MOVIES, query = "SELECT m FROM Movie m")
+@NamedQuery(name = Movie.GET_MOVIE_BY_TITLE, query = "SELECT m FROM Movie m WHERE m.title = :title")
+
 public class Movie {
     public static final String GET_ALL_MOVIES = "Movie.getAll";
+    public static final String GET_MOVIE_BY_TITLE = "Movie.getByTitle";
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "movie_seq")
-
     private Long id;
     private String title;
     private int durationInMinutes;
@@ -21,11 +23,9 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
     private List<Actor> actors;
-
     @ManyToOne
     @JoinColumn(name = "director_id")
     private Director director;
-
     @ManyToMany
     @JoinTable(
             name = "movie_genres",
@@ -33,9 +33,12 @@ public class Movie {
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
     private List<Genre> genres;
-
     @OneToMany(mappedBy = "movie")
     private List<Projection> projections;
+    @OneToOne(mappedBy = "movie", fetch = FetchType.LAZY)
+    private MovieDetails movieDetails;
+
+
 
 
     public Movie(Long id, String title, int durationInMinutes, Director director){
@@ -48,6 +51,9 @@ public class Movie {
     public Movie() {
 
     }
+
+    public MovieDetails getMovieDetails() { return movieDetails; }
+    public void setMovieDetails(MovieDetails movieDetails) { this.movieDetails = movieDetails; }
 
     public void setId(Long id){
        this.id = id;
