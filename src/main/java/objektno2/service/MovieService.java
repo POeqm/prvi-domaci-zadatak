@@ -8,7 +8,6 @@ import objektno2.model.*;
 import objektno2.model.Ticket;
 import java.util.List;
 
-import java.util.List;
 
 @Dependent
 public class MovieService {

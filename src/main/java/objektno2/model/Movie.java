@@ -35,9 +35,10 @@ public class Movie {
     private List<Genre> genres;
     @OneToMany(mappedBy = "movie")
     private List<Projection> projections;
-    @OneToOne(mappedBy = "movie", fetch = FetchType.LAZY)
-    private MovieDetails movieDetails;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "movie_details_id")
+    private MovieDetails movieDetails;
 
 
 

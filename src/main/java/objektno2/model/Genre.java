@@ -10,7 +10,7 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "genre_seq")
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "genres")
+    @ManyToMany(mappedBy = "genres", fetch = FetchType.LAZY)
     private List<Movie> movies;
 
     public Genre(Long id, String name) {

@@ -1,6 +1,7 @@
 package objektno2.resources;
 
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -22,6 +23,7 @@ public class MovieResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/addMovie")
+    @RolesAllowed("admin")
     public String addMovie(Movie movie) {
         movieService.createMovie(movie);
         return "Movie added successfully";

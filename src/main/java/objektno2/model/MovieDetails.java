@@ -1,6 +1,8 @@
 package objektno2.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 
 @Entity
 public class MovieDetails {
@@ -13,10 +15,10 @@ public class MovieDetails {
     private double rating;
     private String trailerUrl;
     private String language;
-
-    @OneToOne
-    @JoinColumn(name = "movie_id")
+    @JsonIgnore
+    @OneToOne(mappedBy = "movieDetails", fetch = FetchType.LAZY)
     private Movie movie;
+   
 
     public MovieDetails() {}
 

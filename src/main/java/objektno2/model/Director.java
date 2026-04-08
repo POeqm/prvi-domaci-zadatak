@@ -10,7 +10,7 @@ public class Director {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "director_seq")
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "director")
+    @OneToMany(mappedBy = "director", fetch = FetchType.LAZY)
     private List<Movie> movies;
 
     public Director(Long id, String name) {

@@ -10,7 +10,7 @@ public class Actor {
     @GeneratedValue(strategy = GenerationType.SEQUENCE,generator = "actor_seq")
     private Long id;
     private String name;
-    @ManyToMany(mappedBy = "actors")
+    @ManyToMany(mappedBy = "actors", fetch = FetchType.LAZY)
     private List<Movie> movies;
 
     public Actor(Long id, String name){
