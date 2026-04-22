@@ -8,8 +8,14 @@ import objektno2.model.*;
 import objektno2.model.Ticket;
 import java.util.List;
 
+import objektno2.client.IpifyClient;
+import objektno2.client.IpifyResponse;
+import objektno2.client.TimeApiClient;
+import objektno2.client.TimezoneResponse;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import jakarta.enterprise.context.ApplicationScoped;
 
-@Dependent
+@ApplicationScoped
 public class MovieService {
     @Inject
     private EntityManager em;
@@ -62,5 +68,37 @@ public class MovieService {
         em.merge(cinemaHall);
         return saved;
     }
+
+    @Transactional
+    public Actor addActor(Actor actor) {
+        return em.merge(actor);
+    }
+
+    @Inject
+    @RestClient
+    IpifyClient ipifyClient;
+
+    @Inject
+    @RestClient
+    TimeApiClient timeApiClient;
+
+    @Transactional
+    public TimezoneResponse getTimezoneByActorId(Long actorId) {
+        Actor actor = em.find(Actor.class, actorId);
+        if (actor == null) {
+            throw new jakarta.ws.rs.NotFoundException("Actor with id " + actorId + " not found");
+        }
+
+        IpifyResponse ipifyResponse = ipifyClient.getMyIp();
+        TimezoneResponse timezoneResponse = timeApiClient.getTimezoneByIp(ipifyResponse.getIp());
+
+        actor.setTimeZone(timezoneResponse.getTimeZone());
+        em.merge(actor);
+
+        return timezoneResponse;
+    }
+
+
+
 
 }

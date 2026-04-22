@@ -17,6 +17,9 @@ public class Actor {
         this.id = id;
         this.name = name;
     }
+    private String timeZone;
+
+
 
     public Actor() {
 
@@ -46,12 +49,16 @@ public class Actor {
         this.movies = movies;
     }
 
+    public String getTimeZone() { return timeZone; }
+    public void setTimeZone(String timeZone) { this.timeZone = timeZone; }
+
     @Override
     public String toString() {
         return "Actor{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", movies=" + movies +
+                ", timeZone='" + timeZone + '\'' +
                 '}';
     }
 }

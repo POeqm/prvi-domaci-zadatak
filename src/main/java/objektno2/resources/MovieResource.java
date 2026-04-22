@@ -6,13 +6,10 @@ import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import objektno2.model.Movie;
-import objektno2.model.Ticket;
+import objektno2.client.TimezoneResponse;
+import objektno2.model.*;
 import objektno2.service.MovieService;
 import java.util.List;
-import objektno2.model.MovieDetails;
-import objektno2.model.CinemaHallInfo;
-import objektno2.model.CinemaHall;
 
 @Path("/movie")
 public class MovieResource {
@@ -92,6 +89,26 @@ public class MovieResource {
     public String addCinemaHall(CinemaHall cinemaHall) {
         movieService.addCinemaHall(cinemaHall);
         return "Cinema hall added successfully";
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/addActor")
+    public String addActor(Actor actor) {
+        movieService.addActor(actor);
+        return "Actor added successfully";
+    }
+
+    @GET
+    @Path("/getTimezoneByIP")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTimezoneByIP(@QueryParam("userId") Long userId) {
+        try {
+            TimezoneResponse timezoneResponse = movieService.getTimezoneByActorId(userId);
+            return Response.ok().entity(timezoneResponse).build();
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
     }
 
 
