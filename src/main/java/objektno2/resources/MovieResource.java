@@ -1,14 +1,17 @@
 package objektno2.resources;
 
 
+import jakarta.annotation.PreDestroy;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import objektno2.client.TimezoneResponse;
+import objektno2.kolokvijum.CurencyResponse;
 import objektno2.model.*;
 import objektno2.service.MovieService;
+
 import java.util.List;
 
 @Path("/movie")
@@ -106,6 +109,23 @@ public class MovieResource {
         try {
             TimezoneResponse timezoneResponse = movieService.getTimezoneByActorId(userId);
             return Response.ok().entity(timezoneResponse).build();
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/currencyConversion")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed("admin")
+    public Response currencyConversion(
+            @QueryParam("from") String from,
+            @QueryParam("to") String to,
+            @QueryParam("value") double value,
+            @QueryParam("userId") Long userId) {
+        try {
+            CurencyResponse result = movieService.currencyConversion(from, to, value, userId);
+            return Response.ok().entity(result).build();
         } catch (jakarta.ws.rs.NotFoundException e) {
             return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
         }

@@ -1,17 +1,18 @@
 package objektno2.service;
 
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.QueryParam;
+import jakarta.ws.rs.core.Response;
+import objektno2.client.*;
+import objektno2.kolokvijum.CurencyResponse;
+import objektno2.kolokvijum.CurrencyApi;
 import objektno2.model.*;
 import objektno2.model.Ticket;
 import java.util.List;
-
-import objektno2.client.IpifyClient;
-import objektno2.client.IpifyResponse;
-import objektno2.client.TimeApiClient;
-import objektno2.client.TimezoneResponse;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import jakarta.enterprise.context.ApplicationScoped;
 
@@ -99,6 +100,22 @@ public class MovieService {
     }
 
 
+    @RestClient
+    CurrencyApi  currencyApi;
+
+    @Transactional
+    public CurencyResponse currencyConversion(String from, String to, double value, Long userId) {
+        Actor actor = em.find(Actor.class, userId);
+        if (actor == null) {
+            throw new jakarta.ws.rs.NotFoundException("User with id " + userId + " not found.");
+        }
+
+        CurencyResponse response = currencyApi.getRates(from, to);
+        response.setValue(value);
+        response.setConvertedValue(value * response.getRate());
+
+        return response;
+    }
 
 
 }
