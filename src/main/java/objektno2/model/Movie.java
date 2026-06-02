@@ -1,5 +1,6 @@
 package objektno2.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "actor_id")
     )
+    @JsonIgnore
     private List<Actor> actors;
     @ManyToOne
     @JoinColumn(name = "director_id")
@@ -32,13 +34,24 @@ public class Movie {
             joinColumns = @JoinColumn(name = "movie_id"),
             inverseJoinColumns = @JoinColumn(name = "genre_id")
     )
+    @JsonIgnore
     private List<Genre> genres;
+    @JsonIgnore
     @OneToMany(mappedBy = "movie")
     private List<Projection> projections;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_details_id")
     private MovieDetails movieDetails;
+
+
+    @ManyToMany(cascade = CascadeType.PERSIST)
+    @JoinTable(
+            name = "movie_files",
+            joinColumns = @JoinColumn(name = "movie_id"),
+            inverseJoinColumns = @JoinColumn(name = "file_id")
+    )
+    private List<UploadedFile> uploadedFiles;
 
 
 
@@ -111,6 +124,11 @@ public class Movie {
     public void setProjections(List<Projection> projections) {
         this.projections = projections;
     }
+
+    // getter i setter
+    public List<UploadedFile> getUploadedFiles() { return uploadedFiles; }
+
+    public void setUploadedFiles(List<UploadedFile> uploadedFiles) { this.uploadedFiles = uploadedFiles; }
 
     public String toString() {
         return "Movie{" +

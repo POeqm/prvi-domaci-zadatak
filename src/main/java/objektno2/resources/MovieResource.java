@@ -11,6 +11,7 @@ import objektno2.client.TimezoneResponse;
 import objektno2.kolokvijum.CurencyResponse;
 import objektno2.model.*;
 import objektno2.service.MovieService;
+import org.jboss.resteasy.annotations.providers.multipart.MultipartForm;
 
 import java.util.List;
 
@@ -131,5 +132,31 @@ public class MovieResource {
         }
     }
 
+    @POST
+    @Path("/uploadFile")
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response uploadFile(
+            @QueryParam("movieId") Long movieId,
+            @MultipartForm MultipartBody body) {
+        try {
+            Movie result = movieService.uploadFileForMovie(movieId, body.fileName, body.file);
+            return Response.ok().entity(result).build();
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
+    }
+
+    @GET
+    @Path("/getMovieWithFiles/{movieId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMovieWithFiles(@PathParam("movieId") Long movieId) {
+        try {
+            Movie result = movieService.getMovieWithFiles(movieId);
+            return Response.ok().entity(result).build();
+        } catch (jakarta.ws.rs.NotFoundException e) {
+            return Response.status(Response.Status.NOT_FOUND).entity(e.getMessage()).build();
+        }
+    }
 
 }

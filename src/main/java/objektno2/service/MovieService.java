@@ -12,6 +12,12 @@ import objektno2.kolokvijum.CurencyResponse;
 import objektno2.kolokvijum.CurrencyApi;
 import objektno2.model.*;
 import objektno2.model.Ticket;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -117,5 +123,52 @@ public class MovieService {
         return response;
     }
 
+    @Transactional
+    public Movie uploadFileForMovie(Long movieId, String fileName, InputStream fileStream) {
+        Movie movie = em.find(Movie.class, movieId);
+        if (movie == null) {
+            throw new jakarta.ws.rs.NotFoundException("Movie with id " + movieId + " not found.");
+        }
+
+        String uploadDir = "C:/uploads/";
+        String filePath = uploadDir + fileName;
+        File file = new File(filePath);
+
+        if (!file.exists()) {
+            try {
+                new File(uploadDir).mkdirs();
+                Files.copy(fileStream, file.toPath());
+            } catch (IOException e) {
+                throw new RuntimeException("Error saving file: " + e.getMessage());
+            }
+        }
+
+        UploadedFile uploadedFile = new UploadedFile();
+        uploadedFile.setFilename(filePath);
+        em.merge(uploadedFile);
+
+        if (movie.getUploadedFiles() == null) {
+            movie.setUploadedFiles(new ArrayList<>());
+        }
+        movie.getUploadedFiles().add(uploadedFile);
+        return em.merge(movie);
+    }
+
+    public Movie getMovieWithFiles(Long movieId) {
+        Movie movie = em.find(Movie.class, movieId);
+        if (movie == null) {
+            throw new jakarta.ws.rs.NotFoundException("Movie with id " + movieId + " not found.");
+        }
+
+        if (movie.getUploadedFiles() != null) {
+            for (UploadedFile uploadedFile : movie.getUploadedFiles()) {
+                if (uploadedFile.getFilename() != null) {
+                    uploadedFile.setFile(new File(uploadedFile.getFilename()));
+                }
+            }
+        }
+
+        return movie;
+    }
 
 }
